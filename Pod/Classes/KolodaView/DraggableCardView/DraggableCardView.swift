@@ -277,13 +277,26 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
         return false
     }
     
-    public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard gestureRecognizer == panGestureRecognizer else {
-            return true
-        }
-        return delegate?.card(cardShouldDrag: self) ?? true
-    }
+//    public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+//        guard gestureRecognizer == panGestureRecognizer else {
+//            return true
+//        }
+//        return delegate?.card(cardShouldDrag: self) ?? true
+//    }
     
+	public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+		guard let panRecognizer = gestureRecognizer as? UIPanGestureRecognizer else {
+			return super.gestureRecognizerShouldBegin(gestureRecognizer)
+		}
+		
+		// Finding it's a horizontal drag
+		let velocity = panRecognizer.velocity(in: self)
+		if abs(velocity.y) > abs(velocity.x) {
+			return false
+		}
+		return delegate?.card(cardShouldDrag: self) ?? true
+	}
+	
     @objc func tapRecognized(_ recogznier: UITapGestureRecognizer) {
         delegate?.card(cardWasTapped: self)
     }
